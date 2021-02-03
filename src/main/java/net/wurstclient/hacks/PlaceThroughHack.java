@@ -15,9 +15,8 @@ import net.minecraft.util.math.Vec3d;
 import net.wurstclient.Category;
 import net.wurstclient.events.RightClickListener;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.mixinterface.IBlockItem;
+import net.wurstclient.mixin.BlockItemAccessor;
 import net.wurstclient.util.BlockUtils;
-import net.wurstclient.util.ChatUtils;
 
 public class PlaceThroughHack extends Hack implements RightClickListener {
 
@@ -64,7 +63,7 @@ public class PlaceThroughHack extends Hack implements RightClickListener {
         CachedBlockPosition cachedPosition = new CachedBlockPosition(usageContext.getWorld(), targetBlock.getBlockPos(), false);
         ItemPlacementContext placementContext = new ItemPlacementContext(usageContext);
         BlockState targetBlockState = cachedPosition.getBlockState();
-        return ((IBlockItem) itemStack.getItem()).canPlace(placementContext, targetBlockState);
+        return ((BlockItemAccessor) itemStack.getItem()).canPlace(placementContext, targetBlockState);
     }
 
     private BlockHitResult getTargetBlock() {
