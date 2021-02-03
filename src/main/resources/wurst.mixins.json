@@ -10,6 +10,7 @@
     "BackgroundRendererMixin",
   	"BlockEntityRenderDispatcherMixin",
   	"BlockMixin",
+    "BlockItemMixin",
   	"BlockModelRendererMixin",
   	"ButtonWidgetMixin",
   	"CactusBlockMixin",
