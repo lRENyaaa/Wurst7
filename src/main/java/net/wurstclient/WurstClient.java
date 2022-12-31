@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.util.InputUtil;
 import net.wurstclient.altmanager.AltManager;
 import net.wurstclient.analytics.WurstAnalytics;
@@ -168,10 +169,22 @@ public enum WurstClient
 			System.out.println("LanguageManager ready after "
 				+ (int)((System.nanoTime() - startTime) / 1e6) + " ms.");
 			
+			System.out.println("Available languages:");
+			MC.getLanguageManager().getAllLanguages()
+				.forEach(l -> System.out.println("- " + l.getCode()));
+			
 			System.out.println("Creating wiki pages...");
 			startTime = System.nanoTime();
+			
 			ChangelogParser.parseFolder(wurstFolder.resolve("changelogs"));
-			createWikiFiles();
+			
+			Path wikiFolder = wurstFolder.resolve("wiki");
+			createWikiFiles(wikiFolder, "en_us");
+			
+			createWikiFiles(wikiFolder.resolve("de"), "de_de");
+			
+			createUpdateFiles(wikiFolder);
+			
 			System.out.println("Done creating wiki pages after "
 				+ (int)((System.nanoTime() - startTime) / 1e6) + " ms.");
 			
@@ -194,11 +207,20 @@ public enum WurstClient
 			{
 				
 			}
+		
+		MC.reloadResources().join();
 	}
 	
-	private void createWikiFiles()
+	private void createWikiFiles(Path wikiFolder, String lang)
 	{
-		Path wikiFolder = wurstFolder.resolve("wiki");
+		System.out.println("Setting language to " + lang);
+		
+		LanguageDefinition languageDefinition =
+			MC.getLanguageManager().getLanguage(lang);
+		MC.getLanguageManager().setLanguage(languageDefinition);
+		MC.options.language = languageDefinition.getCode();
+		MC.reloadResources().join();
+		
 		Path wikiCmdFolder = wikiFolder.resolve("cmd");
 		
 		try
@@ -217,7 +239,6 @@ public enum WurstClient
 		otfs.getAllOtfs().parallelStream()
 			.forEach(otf -> createWikiFile(otf, wikiFolder));
 		
-		createUpdateFiles(wikiFolder);
 	}
 	
 	private void createWikiFile(Feature feature, Path wikiFolder)
@@ -299,8 +320,8 @@ public enum WurstClient
 	
 	public String translate(String key)
 	{
-		if(otfs.translationsOtf.getForceEnglish().isChecked())
-			return IMC.getLanguageManager().getEnglish().get(key);
+		// if(otfs.translationsOtf.getForceEnglish().isChecked())
+		// return IMC.getLanguageManager().getEnglish().get(key);
 		
 		return I18n.translate(key);
 	}
