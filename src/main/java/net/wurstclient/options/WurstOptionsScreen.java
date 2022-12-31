@@ -41,9 +41,10 @@ public class WurstOptionsScreen extends Screen
 	@Override
 	public void init()
 	{
-		addDrawableChild(
-			new ButtonWidget(width / 2 - 100, height / 4 + 144 - 16, 200, 20,
-				Text.literal("Back"), b -> client.setScreen(prevScreen)));
+		addDrawableChild(ButtonWidget
+			.builder(Text.literal("Back"), b -> client.setScreen(prevScreen))
+			.dimensions(width / 2 - 100, height / 4 + 144 - 16, 200, 20)
+			.build());
 		
 		addSettingButtons();
 		addManagerButtons();
@@ -120,21 +121,22 @@ public class WurstOptionsScreen extends Screen
 		OperatingSystem os = Util.getOperatingSystem();
 		
 		new WurstOptionsButton(54, 24, () -> "Official Website",
-			"WurstClient.net", b -> os.open("https://www.wurstclient.net/"));
+			"WurstClient.net", b -> os.open(
+				"https://www.wurstclient.net/?utm_source=Wurst+Client&utm_medium=Wurst+Options&utm_content=Official+Website"));
 		
-		new WurstOptionsButton(54, 48, () -> "Wurst Wiki",
-			"Wiki.WurstClient.net",
-			b -> os.open("https://wiki.wurstclient.net/"));
+		new WurstOptionsButton(54, 48, () -> "Wurst Wiki", "Wurst.Wiki",
+			b -> os.open(
+				"https://wurst.wiki/?utm_source=Wurst+Client&utm_medium=Wurst+Options&utm_content=Wurst+Wiki"));
 		
 		new WurstOptionsButton(54, 72, () -> "Twitter", "@Wurst_Imperium",
-			b -> os.open("https://twitter.com/Wurst_Imperium"));
+			b -> os.open("https://www.wurstclient.net/twitter/"));
 		
 		new WurstOptionsButton(54, 96, () -> "Reddit", "r/WurstClient",
-			b -> os.open("https://www.reddit.com/r/WurstClient/"));
+			b -> os.open("https://www.wurstclient.net/reddit/"));
 		
 		new WurstOptionsButton(54, 120, () -> "Donate",
-			"paypal.me/WurstImperium",
-			b -> os.open("https://www.wurstclient.net/donate/"));
+			"WurstClient.net/donate", b -> os.open(
+				"https://www.wurstclient.net/donate/?utm_source=Wurst+Client&utm_medium=Wurst+Options&utm_content=Donate"));
 	}
 	
 	@Override
@@ -203,7 +205,8 @@ public class WurstOptionsScreen extends Screen
 		{
 			super(WurstOptionsScreen.this.width / 2 + xOffset,
 				WurstOptionsScreen.this.height / 4 - 16 + yOffset, 100, 20,
-				Text.literal(messageSupplier.get()), pressAction);
+				Text.literal(messageSupplier.get()), pressAction,
+				ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 			
 			this.messageSupplier = messageSupplier;
 			

@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import com.google.gson.JsonElement;
@@ -34,7 +35,6 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Matrix4f;
 import net.wurstclient.Category;
 import net.wurstclient.Feature;
 import net.wurstclient.WurstClient;
@@ -90,6 +90,7 @@ public final class ClickGui
 		Window uiSettings = new Window("UI Settings");
 		uiSettings.add(new FeatureButton(WURST.getOtfs().wurstLogoOtf));
 		uiSettings.add(new FeatureButton(WURST.getOtfs().hackListOtf));
+		uiSettings.add(new FeatureButton(WURST.getOtfs().keybindManagerOtf));
 		ClickGuiHack clickGuiHack = WURST.getHax().clickGuiHack;
 		Stream<Setting> settings = clickGuiHack.getSettings().values().stream();
 		settings.map(Setting::getComponent).forEach(c -> uiSettings.add(c));
@@ -553,7 +554,7 @@ public final class ClickGui
 		matrixStack.push();
 		matrixStack.translate(0, 0, 300);
 		
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		// background
 		RenderSystem.setShaderColor(bgColor[0], bgColor[1], bgColor[2],
@@ -629,7 +630,7 @@ public final class ClickGui
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		if(window.isMinimized())
 			y2 = y3;
@@ -893,7 +894,7 @@ public final class ClickGui
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		// button background
 		RenderSystem.setShaderColor(bgColor[0], bgColor[1], bgColor[2],
