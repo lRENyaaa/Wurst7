@@ -52,6 +52,8 @@ import net.wurstclient.settings.SettingsFile;
 import net.wurstclient.update.ProblematicResourcePackDetector;
 import net.wurstclient.update.WurstUpdater;
 import net.wurstclient.util.json.JsonException;
+import net.wurstclient.wiki.ChangelogParser;
+import net.wurstclient.wiki.WikiPage;
 
 public enum WurstClient
 {

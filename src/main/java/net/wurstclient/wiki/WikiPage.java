@@ -5,7 +5,7 @@
  * License, version 3. If a copy of the GPL was not distributed with this
  * file, You can obtain one at: https://www.gnu.org/licenses/gpl-3.0.txt
  */
-package net.wurstclient;
+package net.wurstclient.wiki;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.wurstclient.Feature;
+import net.wurstclient.WurstClient;
 import net.wurstclient.command.Command;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.keybinds.Keybind;
