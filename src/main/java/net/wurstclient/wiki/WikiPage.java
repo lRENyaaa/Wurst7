@@ -17,8 +17,6 @@ import net.wurstclient.Feature;
 import net.wurstclient.WurstClient;
 import net.wurstclient.command.Command;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.keybinds.Keybind;
-import net.wurstclient.keybinds.KeybindList;
 import net.wurstclient.settings.AttackSpeedSliderSetting;
 import net.wurstclient.settings.CheckboxSetting;
 import net.wurstclient.settings.ColorSetting;
@@ -29,9 +27,6 @@ import net.wurstclient.util.ColorUtils;
 
 public final class WikiPage
 {
-	private static final ArrayList<Keybind> defaultKeybinds =
-		new ArrayList<>(KeybindList.DEFAULT_KEYBINDS);
-	
 	private final Feature feature;
 	private String text = "";
 	private final ArrayList<String> tags = new ArrayList<>();
@@ -41,7 +36,13 @@ public final class WikiPage
 		this.feature = feature;
 		
 		addHeading();
-		addHackTable();
+		text += new HackTable(feature);
+		
+		String type = feature instanceof Hack ? "Minecraft hack"
+			: feature instanceof Command ? "[[:command|chat command]]"
+				: "Wurst feature";
+		text += String.format("%s is a %s that... FIXME\n\n", feature.getName(),
+			type);
 		
 		if(feature instanceof Command)
 			addSyntax();
@@ -53,51 +54,7 @@ public final class WikiPage
 	
 	private void addHeading()
 	{
-		text += "====== " + feature.getName() + " ======\n\n";
-	}
-	
-	private void addHackTable()
-	{
-		String name = feature.getName();
-		String picName =
-			(name.startsWith(".") ? name.substring(1) : name).toLowerCase();
-		String type = feature instanceof Hack ? "Hack"
-			: feature instanceof Command ? "Command" : "Other Feature";
-		String category = feature.getCategory() == null ? "No Category|none"
-			: feature.getCategory().getName();
-		String description = convertDescription(feature.getDescription());
-		String keybind = getDefaultKeybind();
-		
-		text += "<WRAP 516px>\n";
-		text += "^  " + name + "  ^^\n";
-		text += "|{{ " + picName + ".webp?500 |}}||\n";
-		text += "^Type|[[:" + type + "]]|\n";
-		text += "^Category|[[:" + category + "]]|\n";
-		text += "^In-game description|" + description + "|\n";
-		text += "^[[:keybinds#default_keybinds|Default keybind]]|" + keybind
-			+ "|\n";
-		text += "^Source code|[[w7src>"
-			+ feature.getClass().getName().replace(".", "/") + ".java]]|\n";
-		text += "</WRAP>\n\n";
-		
-		String type2 = feature instanceof Hack ? "Minecraft hack"
-			: feature instanceof Command ? "[[:command|chat command]]"
-				: "Wurst feature";
-		text += name + " is a " + type2 + " that... FIXME\n\n";
-	}
-	
-	private String getDefaultKeybind()
-	{
-		String name = feature.getName().toLowerCase().replace(" ", "_");
-		if(name.startsWith("."))
-			name = name.substring(1);
-		
-		for(Keybind keybind : defaultKeybinds)
-			if(keybind.getCommands().toLowerCase().contains(name))
-				return keybind.getKey().replace("key.keyboard.", "")
-					.toUpperCase();
-			
-		return "none";
+		text += String.format("====== %s ======\n\n", feature.getName());
 	}
 	
 	private void addSyntax()
@@ -197,7 +154,7 @@ public final class WikiPage
 		text += "\n";
 	}
 	
-	private String convertDescription(String input)
+	public static String convertDescription(String input)
 	{
 		if(input.isEmpty())
 			return "(none)";
