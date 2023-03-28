@@ -9,9 +9,6 @@ package net.wurstclient.wiki;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import net.wurstclient.Feature;
 import net.wurstclient.WurstClient;
@@ -35,7 +32,7 @@ public final class WikiPage
 	{
 		this.feature = feature;
 		
-		addHeading();
+		text += String.format("====== %s ======\n\n", feature.getName());
 		text += new HackTable(feature);
 		
 		String type = feature instanceof Hack ? "Minecraft hack"
@@ -48,13 +45,11 @@ public final class WikiPage
 			addSyntax();
 		
 		addSettings();
-		addChanges();
+		
+		text += "===== Changes =====\n\n";
+		text += new ChangelogTable(feature);
+		
 		addTags();
-	}
-	
-	private void addHeading()
-	{
-		text += String.format("====== %s ======\n\n", feature.getName());
 	}
 	
 	private void addSyntax()
@@ -163,37 +158,6 @@ public final class WikiPage
 		
 		return "\"" + translated.replace("\n", "\\\\ ")
 			.replaceAll("\u00a7l([^\u00a7]+)\u00a7r", "**$1**") + "\"";
-	}
-	
-	private void addChanges()
-	{
-		text += "===== Changes =====\n\n";
-		text += "^Version^Changes^\n";
-		
-		String featureName = feature.getName();
-		Set<Entry<String, List<String>>> changelogs =
-			ChangelogParser.getChangelogs().entrySet();
-		
-		for(Entry<String, List<String>> changelog : changelogs)
-		{
-			String version = changelog.getKey().replace("-BETA", " Beta");
-			List<String> changes = changelog.getValue();
-			boolean firstChangeInVersion = true;
-			
-			for(String change : changes)
-			{
-				if(!change.contains(featureName))
-					continue;
-				
-				if(firstChangeInVersion)
-					text +=
-						"|[[update:Wurst " + version + "]]|" + change + "|\n";
-				else
-					text += "|:::|" + change + "|\n";
-				
-				firstChangeInVersion = false;
-			}
-		}
 	}
 	
 	private void addTags()
