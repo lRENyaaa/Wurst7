@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.util.InputUtil;
 import net.wurstclient.altmanager.AltManager;
 import net.wurstclient.analytics.WurstAnalytics;
@@ -62,8 +61,8 @@ public enum WurstClient
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
-	public static final String VERSION = "7.32";
-	public static final String MC_VERSION = "1.19.3";
+	public static final String VERSION = "7.33";
+	public static final String MC_VERSION = "1.19.4";
 	
 	private WurstAnalytics analytics;
 	private EventManager eventManager;
@@ -173,7 +172,7 @@ public enum WurstClient
 			
 			System.out.println("Available languages:");
 			MC.getLanguageManager().getAllLanguages()
-				.forEach(l -> System.out.println("- " + l.getCode()));
+				.forEach((s, l) -> System.out.println("- " + s));
 			
 			System.out.println("Creating wiki pages...");
 			startTime = System.nanoTime();
@@ -217,10 +216,8 @@ public enum WurstClient
 	{
 		System.out.println("Setting language to " + lang);
 		
-		LanguageDefinition languageDefinition =
-			MC.getLanguageManager().getLanguage(lang);
-		MC.getLanguageManager().setLanguage(languageDefinition);
-		MC.options.language = languageDefinition.getCode();
+		MC.getLanguageManager().setLanguage(lang);
+		MC.options.language = lang;
 		MC.reloadResources().join();
 		
 		Path wikiCmdFolder = wikiFolder.resolve("cmd");
@@ -324,6 +321,12 @@ public enum WurstClient
 	{
 		// if(otfs.translationsOtf.getForceEnglish().isChecked())
 		// return IMC.getLanguageManager().getEnglish().get(key);
+		
+		// This extra check is necessary because I18n.translate() doesn't
+		// always return the key when the translation is missing. If the key
+		// contains a '%', it will return "Format Error: key" instead.
+		if(!I18n.hasTranslation(key))
+			return key;
 		
 		return I18n.translate(key);
 	}
