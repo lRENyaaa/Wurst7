@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.wurstclient.util.json.JsonException;
@@ -33,6 +34,14 @@ public final class OobaboogaMessageCompleter extends MessageCompleter
 		params.addProperty("max_length", modelSettings.maxTokens.getValueI());
 		params.addProperty("temperature", modelSettings.temperature.getValue());
 		params.addProperty("top_p", modelSettings.topP.getValue());
+		params.addProperty("repetition_penalty",
+			modelSettings.repetitionPenalty.getValue());
+		params.addProperty("encoder_repetition_penalty",
+			modelSettings.encoderRepetitionPenalty.getValue());
+		JsonArray stoppingStrings = new JsonArray();
+		stoppingStrings
+			.add(modelSettings.stopSequence.getSelected().getSequence());
+		params.add("stopping_strings", stoppingStrings);
 		return params;
 	}
 	
@@ -64,14 +73,6 @@ public final class OobaboogaMessageCompleter extends MessageCompleter
 		// extract completion from response
 		String completion =
 			response.getArray("results").getObject(0).getString("text");
-		
-		// remove the extra character at the start
-		if(!completion.isEmpty())
-			completion = completion.substring(1);
-		
-		// remove the next message
-		if(completion.contains("\n<"))
-			completion = completion.substring(0, completion.indexOf("\n<"));
 		
 		// remove newlines
 		completion = completion.replace("\n", " ");
