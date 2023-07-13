@@ -126,15 +126,15 @@ public enum ChangelogParser
 		});
 		
 		// fix wiki links
-		stream = stream.map(change -> change.replaceAll(
-			"\\[(.+?)\\]\\(https://wiki\\.wurstclient\\.net/.+?\\)", "[[$1]]"));
+		stream = stream.map(change -> change
+			.replaceAll("\\[(.+?)\\]\\(https://wurst\\.wiki/.+?\\)", "[[$1]]"));
 		
 		// fix code/commands formatting
 		stream = stream.map(change -> change.replace("`", "''"));
 		
 		// fix "Thanks to ...!" entries
 		stream = stream.map(change -> change.replaceAll(
-			"\\(Thanks to <a href=\"https://github.com/[^\"]+\"[^>]+>([^<]+)</a>!\\)",
+			"\\(Thanks to <a href=\"https://github.com/[^\"]+\"[^>]*>([^<]+)</a>!\\)",
 			"(Thanks to [[gh>$1]]!)"));
 		
 		// fix extra whitespace
