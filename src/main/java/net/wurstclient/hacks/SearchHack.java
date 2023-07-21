@@ -67,11 +67,13 @@ public final class SearchHack extends Hack
 {
 	private final BlockSetting block = new BlockSetting("Block",
 		"The type of block to search for.", "minecraft:diamond_ore", false);
+	private String prevBlock;
 	
 	private final EnumSetting<SearchArea> area = new EnumSetting<>("Area",
 		"The area around the player to search in.\n"
 			+ "Higher values require a faster computer.",
 		SearchArea.values(), SearchArea.D11);
+	private SearchArea prevArea;
 	
 	private final SliderSetting limit = new SliderSetting("Limit",
 		"The maximum number of blocks to display.\n"
@@ -91,6 +93,9 @@ public final class SearchHack extends Hack
 	
 	private VertexBuffer vertexBuffer;
 	private boolean bufferUpToDate;
+	
+	private ChunkPos prevCenter = null;
+	private long lastUpdateTime = System.currentTimeMillis();
 	
 	public SearchHack()
 	{
@@ -180,21 +185,26 @@ public final class SearchHack extends Hack
 	@Override
 	public void onUpdate()
 	{
-		Block currentBlock = block.getBlock();
 		BlockPos eyesPos = BlockPos.ofFloored(RotationUtils.getEyesPos());
-		
 		ChunkPos center = MC.player.getChunkPos();
+
 		int dimensionId = MC.world.getRegistryKey().toString().hashCode();
 		
-		addSearchersInRange(center, currentBlock, dimensionId);
-		removeSearchersOutOfRange(center);
-		replaceSearchersWithDifferences(currentBlock, dimensionId);
-		replaceSearchersWithChunkUpdate(currentBlock, dimensionId);
+		Block currentBlock = block.getBlock();
+		
+		boolean settingsChanged = checkIfBlockChanged() || checkIfAreaChanged() || checkIfLimitChanged();
+		
+		if (settingsChanged || (!center.equals(prevCenter) && System.currentTimeMillis() - lastUpdateTime >= 1000)) {
+			addSearchersInRange(center, currentBlock, dimensionId);
+			removeSearchersOutOfRange(center);
+			replaceSearchersWithDifferences(currentBlock, dimensionId);
+			replaceSearchersWithChunkUpdate(currentBlock, dimensionId);
+			prevCenter = center;
+			lastUpdateTime = System.currentTimeMillis();
+		}
 		
 		if(!areAllChunkSearchersDone())
 			return;
-		
-		checkIfLimitChanged();
 		
 		if(getMatchingBlocksTask == null)
 			startGetMatchingBlocksTask(eyesPos);
@@ -354,14 +364,32 @@ public final class SearchHack extends Hack
 		return true;
 	}
 	
-	private void checkIfLimitChanged()
+	private boolean checkIfBlockChanged() {
+		if (!block.getBlockName().equals(prevBlock)) {
+			prevBlock = block.getBlockName();
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean checkIfAreaChanged() {
+		if (!area.getSelected().equals(prevArea)) {
+			prevArea = area.getSelected();
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean checkIfLimitChanged()
 	{
 		if(limit.getValueI() != prevLimit)
 		{
 			stopPool2Tasks();
 			notify = true;
 			prevLimit = limit.getValueI();
+			return true;
 		}
+		return false;
 	}
 	
 	private void startGetMatchingBlocksTask(BlockPos eyesPos)
