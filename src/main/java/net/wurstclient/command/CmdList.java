@@ -26,6 +26,7 @@ public final class CmdList
 	public final BlockListCmd blockListCmd = new BlockListCmd();
 	public final ClearCmd clearCmd = new ClearCmd();
 	public final CopyItemCmd copyitemCmd = new CopyItemCmd();
+	public final ClickCmd clickCmd = new ClickCmd();
 	public final DamageCmd damageCmd = new DamageCmd();
 	public final DigCmd digCmd = new DigCmd();
 	public final DropCmd dropCmd = new DropCmd();
@@ -39,6 +40,7 @@ public final class CmdList
 	public final GiveCmd giveCmd = new GiveCmd();
 	public final GmCmd gmCmd = new GmCmd();
 	public final GoToCmd goToCmd = new GoToCmd();
+	public final WolfxBotCmd wolfxBotCmd = new WolfxBotCmd();
 	public final HelpCmd helpCmd = new HelpCmd();
 	public final InvseeCmd invseeCmd = new InvseeCmd();
 	public final IpCmd ipCmd = new IpCmd();
