@@ -41,6 +41,7 @@ public final class CmdList
 	public final GmCmd gmCmd = new GmCmd();
 	public final GoToCmd goToCmd = new GoToCmd();
 	public final WolfxBotCmd wolfxBotCmd = new WolfxBotCmd();
+	public final WolfxBotV2Cmd wolfxBotV2Cmd = new WolfxBotV2Cmd();
 	public final HelpCmd helpCmd = new HelpCmd();
 	public final InvseeCmd invseeCmd = new InvseeCmd();
 	public final IpCmd ipCmd = new IpCmd();
